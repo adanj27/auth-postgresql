@@ -1,9 +1,8 @@
 import { Pool } from "pg";
 
 export const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: Number(process.env.DB_PORT),
+  connectionString: process.env.DATABASE_URL || "postgresql://aj270594:6sJxZoDTMzDUgE1hiyMznRjKPWpKycXP@dpg-cub7o05ds78s73aafa50-a.oregon-postgres.render.com/authdb_msm8",
+  ssl: {
+    rejectUnauthorized: false, // Necesario si Render requiere SSL
+  },
 });
