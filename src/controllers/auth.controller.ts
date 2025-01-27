@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { createUser, findUserByEmail } from "../models/user.model";
 import { generateToken } from "../utils/jwt";
 import { RegisterSchema, LoginSchema } from "../schemas/auth.schema";
+import { createProfile } from "../models/profile.model";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -17,6 +18,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await createUser(email, hashedPassword, name);
+
+        await createProfile(user.id, "", "");
 
         res.status(201).json({
             success: true,
