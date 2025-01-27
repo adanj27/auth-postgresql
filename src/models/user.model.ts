@@ -5,10 +5,12 @@ export const findUserByEmail = async (email: string) => {
     return rows[0];
 };
 
-export const createUser = async (email: string, password: string) => {
+export const createUser = async (email: string, password: string, name: string) => {
     const { rows } = await pool.query(
-        "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email",
-        [email, password]
+        `INSERT INTO users (email, password, name, registered_at) 
+         VALUES ($1, $2, $3, NOW()) 
+         RETURNING id, email, name, registered_at`,
+        [email, password, name]
     );
     return rows[0];
 };
