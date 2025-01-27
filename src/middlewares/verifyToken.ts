@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
-    const token = req.headers["authorization"]?.split(" ")[1];
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
         res.status(401).json({ message: "Token missing" });
@@ -14,6 +15,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction): vo
         req.body.user = decoded; // Adjuntar usuario al cuerpo de la solicitud.
         next(); // Continuar con la siguiente función.
     } catch (error) {
+        console.error("Token verification error:", error);
         res.status(403).json({ message: "Invalid token" });
     }
 };
