@@ -25,7 +25,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await createUser(email, hashedPassword, username);
 
-        await createProfile(user.id, "", "");
+        await createProfile(user.id, "");
 
         res.status(201).json({
             success: true,
