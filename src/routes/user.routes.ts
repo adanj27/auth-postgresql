@@ -30,9 +30,9 @@ router.get("/profile", verifyToken, async (req, res) => {
 router.put("/profile", verifyToken, async (req, res) => {
     try {
         const user = req.body.user;
-        const { username, bio } = req.body;
+        const { name } = req.body;
 
-        const updatedProfile = await updateProfile(user.id, username, bio);
+        const updatedProfile = await updateProfile(user.id, name);
 
         if (!updatedProfile) {
             return res.status(404).json({ message: "Profile not found" });
@@ -43,8 +43,7 @@ router.put("/profile", verifyToken, async (req, res) => {
             user: {
                 email: user.email,
                 name: user.name,
-                username: updatedProfile.username,
-                bio: updatedProfile.bio
+                username: updatedProfile.name
             }
         });
     } catch (error) {
