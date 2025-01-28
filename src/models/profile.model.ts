@@ -6,23 +6,23 @@
        return rows[0];
    };
 
-   export const createProfile = async (userId: number, username: string, bio: string) => {
+   export const createProfile = async (userId: number, name: string, bio: string) => {
        const { rows } = await pool.query(
-           `INSERT INTO profiles (user_id, username, bio) 
+           `INSERT INTO profiles (user_id, name, bio) 
             VALUES ($1, $2, $3) 
-            RETURNING id, user_id, username, bio`,
-           [userId, username, bio]
+            RETURNING id, user_id, name, bio`,
+           [userId, name, bio]
        );
        return rows[0];
    };
 
-   export const updateProfile = async (userId: number, username: string, bio: string) => {
+   export const updateProfile = async (userId: number, name: string, bio: string) => {
        const { rows } = await pool.query(
            `UPDATE profiles 
-            SET username = $1, bio = $2 
+            SET name = $1, bio = $2 
             WHERE user_id = $3 
-            RETURNING id, user_id, username, bio`,
-           [username, bio, userId]
+            RETURNING id, user_id, name, bio`,
+           [name, bio, userId]
        );
        return rows[0];
 };

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { createUser, findUserByEmail } from "../models/user.model";
+import { createUser, findUserByEmail, findUserByUsername } from "../models/user.model";
 import { generateToken } from "../utils/jwt";
 import { RegisterSchema, LoginSchema } from "../schemas/auth.schema";
 import { createProfile } from "../models/profile.model";
@@ -8,16 +8,22 @@ import { createProfile } from "../models/profile.model";
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
         // Validar datos usando Zod
-        const { email, password, name } = RegisterSchema.parse(req.body);
+        const { email, password, username } = RegisterSchema.parse(req.body);
 
         const userExists = await findUserByEmail(email);
         if (userExists) {
             res.status(400).json({ success: false, message: "Email already in use" });
             return;
-        }
+        };
+
+        const usernameExists = await findUserByUsername(username);
+        if (usernameExists) {
+            res.status(400).json({ success: false, message: "Username already in use" });
+            return;
+        };
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await createUser(email, hashedPassword, name);
+        const user = await createUser(email, hashedPassword, username);
 
         await createProfile(user.id, "", "");
 
