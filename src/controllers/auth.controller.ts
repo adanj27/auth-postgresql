@@ -64,7 +64,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             success: true,
             message: "Login successful",
             token,
-            user: { id: user.id, email: user.email, name: user.name },
         });
     } catch (error: any) {
         res.status(400).json({ success: false, message: error.message });

@@ -14,6 +14,7 @@ router.get("/profile", verifyToken, async (req, res) => {
         }
 
         res.json({
+            success: true,
             message: "User profile",
             user: {
                 email: user.email,
@@ -39,6 +40,7 @@ router.put("/profile", verifyToken, async (req, res) => {
         }
 
         res.json({
+            success: true,
             message: "Profile updated successfully",
             user: {
                 email: user.email,
