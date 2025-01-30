@@ -1,6 +1,7 @@
 import express from 'express';
 import { verifyToken, authorize } from '../middlewares/verifyToken';
-import { getUsers, deleteUser } from '../controllers/admin.controller';
+import { deleteUser } from '../controllers/admin.controller';
+import { getUsers } from '../controllers/users.controller';
 
 const adminRoutes = express.Router();
 

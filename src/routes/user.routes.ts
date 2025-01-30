@@ -1,56 +1,13 @@
-import { Router } from "express";
-import { verifyToken } from "../middlewares/verifyToken";
-import { findProfileByUserId, updateProfile } from "../models/profile.model";
+import { Router } from 'express';
+import { verifyToken } from '../middlewares/verifyToken';
+import { getProfile, updateUserProfile } from '../controllers/profile';
 
 const router = Router();
 
-router.get("/profile", verifyToken, async (req, res) => {
-    try {
-        const user = req.body.user;
-        const profile = await findProfileByUserId(user.id);
+// Obtener el perfil del usuario
+router.get("/profile", verifyToken, getProfile);
 
-        if (!profile) {
-            return res.status(404).json({ message: "Profile not found" });
-        }
-
-        res.json({
-            success: true,
-            message: "User profile",
-            user: {
-                email: user.email,
-                name: user.name,
-                username: profile.username,
-                bio: profile.bio
-            }
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
-    }
-});
-
-router.put("/profile", verifyToken, async (req, res) => {
-    try {
-        const user = req.body.user;
-        const { name } = req.body;
-
-        const updatedProfile = await updateProfile(user.id, name);
-
-        if (!updatedProfile) {
-            return res.status(404).json({ message: "Profile not found" });
-        }
-
-        res.json({
-            success: true,
-            message: "Profile updated successfully",
-            user: {
-                email: user.email,
-                name: user.name,
-                username: updatedProfile.name
-            }
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
-    }
-});
+// Actualizar el perfil del usuario
+router.put("/profile", verifyToken, updateUserProfile);
 
 export default router;

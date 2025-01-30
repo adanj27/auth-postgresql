@@ -1,6 +1,7 @@
 import express from 'express';
 import { verifyToken, authorize } from '../middlewares/verifyToken';
-import { getUsers, changeUserRole } from '../controllers/superadmin.controller';
+import { changeUserRole } from '../controllers/superadmin.controller';
+import { getUsers } from '../controllers/users.controller';
 
 const superadminRoutes = express.Router();
 
