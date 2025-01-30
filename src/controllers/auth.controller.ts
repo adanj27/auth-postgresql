@@ -5,6 +5,7 @@ import { assignRoleToUser, getUserRole } from "../models/role.model";
 import { generateToken } from "../utils/jwt";
 import { RegisterSchema, LoginSchema } from "../schemas/auth.schema";
 import { createProfile } from "../models/profile.model";
+import { addToBlacklist } from "../middlewares/verifyToken";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -76,5 +77,23 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         });
     } catch (error: any) {
         res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+
+        if (!token) {
+            res.status(400).json({ success: false, message: "Token missing" });
+            return;
+        }
+
+        addToBlacklist(token);
+
+        res.status(200).json({ success: true, message: "Logged out successfully" });
+    } catch (error: any) {
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
