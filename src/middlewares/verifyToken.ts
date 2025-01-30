@@ -8,7 +8,7 @@ export const addToBlacklist = async (token: string) => {
   
   export const isTokenBlacklisted = async (token: string): Promise<boolean> => {
     const result = await pool.query('SELECT 1 FROM token_blacklist WHERE token = $1', [token]);
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   };
   
   export const verifyToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
