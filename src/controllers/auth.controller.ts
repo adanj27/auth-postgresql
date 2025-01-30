@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { createUser, findUserByEmail, findUserByUsername } from "../models/user.model";
+import { assignRoleToUser, getUserRole } from "../models/role.model";
 import { generateToken } from "../utils/jwt";
 import { RegisterSchema, LoginSchema } from "../schemas/auth.schema";
 import { createProfile } from "../models/profile.model";
@@ -26,6 +27,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         const user = await createUser(email, hashedPassword, username);
 
         await createProfile(user.id, "");
+        await assignRoleToUser(user.id, 'user');
 
         res.status(201).json({
             success: true,
@@ -59,7 +61,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const token = generateToken({ id: user.id, email: user.email });
+        // Obtener el rol del usuario
+        const role = await getUserRole(user.id);
+        if (!role) {
+            res.status(500).json({ success: false, message: "Role not found for user" });
+            return;
+        }
+
+        const token = generateToken({ id: user.id, email: user.email, role });
         res.json({
             success: true,
             message: "Login successful",

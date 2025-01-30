@@ -19,3 +19,14 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction): vo
         res.status(403).json({ message: "Invalid token" });
     }
 };
+
+export const authorize = (role: string) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const userRole = (req as any).user.role;
+        if (userRole !== role) {
+            res.status(403).json({ success: false, message: 'Access denied. Insufficient permissions.' });
+            return;
+        }
+        next();
+    };
+};
