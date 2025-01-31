@@ -7,13 +7,13 @@
 
 /**
  * @swagger
- * /users/profile:
+ * /user/profile:
  *   get:
  *     summary: Obtener el perfil del usuario autenticado
  *     security:
  *       - BearerAuth: []
  *     tags:
- *       - Users
+ *       - Profile
  *     responses:
  *       200:
  *         description: Perfil del usuario recuperado exitosamente
@@ -45,7 +45,7 @@
 
 /**
  * @swagger
- * /users/profile:
+ * /user/profile:
  *   put:
  *     summary: Actualizar el perfil del usuario autenticado
  *     security:

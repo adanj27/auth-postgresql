@@ -1,8 +1,8 @@
 /**
  * @swagger
  * tags:
- *   name: Superadmin
- *   description: Superadmin management endpoints
+ *   name: SuperAdmin
+ *   description: SuperAdmin management endpoints
  */
 
 /**
