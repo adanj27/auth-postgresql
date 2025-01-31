@@ -1,18 +1,71 @@
 /**
  * @swagger
- * /users:
+ * tags:
+ *   name: Profile
+ *   description: Profile user management endpoints
+ */
+
+/**
+ * @swagger
+ * /users/profile:
  *   get:
- *     summary: Get list of users
- *     tags: [Users]
- *     parameters:
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: Optional search parameter to filter users by name
+ *     summary: Obtener el perfil del usuario autenticado
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Users
  *     responses:
  *       200:
- *         description: List of users
+ *         description: Perfil del usuario recuperado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *                     bio:
+ *                       type: string
+ *       401:
+ *         description: No autorizado (token inválido o no proporcionado)
  *       500:
- *         description: Internal server error
+ *         description: Error interno del servidor
+ */
+
+/**
+ * @swagger
+ * /users/profile:
+ *   put:
+ *     summary: Actualizar el perfil del usuario autenticado
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Perfil actualizado exitosamente
+ *       404:
+ *         description: Perfil no encontrado
+ *       500:
+ *         description: Error interno del servidor
  */
