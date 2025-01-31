@@ -51,7 +51,7 @@
  *     security:
  *       - BearerAuth: []
  *     tags:
- *       - Users
+ *       - Profile
  *     requestBody:
  *       required: true
  *       content:
