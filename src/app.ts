@@ -6,6 +6,8 @@ import superadminRoutes from "./routes/superadmin.routes";
 import { errorHandler } from "./middlewares/errorHandler";
 import { sanitizeInput } from "./middlewares/sanirizeInput";
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocs from './docs/swagger';
 
 const app = express();
 
@@ -24,6 +26,7 @@ app.use('/api/v1/admin', adminRoutes);
 
 // Rutas protegidas para superadmin
 app.use('/api/v1/superadmin', superadminRoutes);
+app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use(errorHandler);
 
 export default app;
