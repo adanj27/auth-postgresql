@@ -10,7 +10,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'https://auth-postgresql.onrender.com//api/v1',
+        url: 'https://auth-postgresql.onrender.com/api/v1',
       },
     ],
   },
