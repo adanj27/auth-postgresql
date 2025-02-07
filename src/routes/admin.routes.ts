@@ -6,7 +6,7 @@ import { getUsers } from '../controllers/users.controller';
 const adminRoutes = express.Router();
 
 // Proteger todas las rutas con autenticación y autorización
-// adminRoutes.use(verifyToken);
+adminRoutes.use(verifyToken);
 // adminRoutes.use(authorize('admin'));
 
 // Obtener lista de usuarios
