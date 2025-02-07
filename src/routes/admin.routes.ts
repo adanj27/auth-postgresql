@@ -7,7 +7,7 @@ const adminRoutes = express.Router();
 
 // Proteger todas las rutas con autenticación y autorización
 adminRoutes.use(verifyToken);
-// adminRoutes.use(authorize('admin'));
+adminRoutes.use(authorize('admin'));
 
 // Obtener lista de usuarios
 adminRoutes.get('/users', getUsers);

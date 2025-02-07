@@ -35,13 +35,36 @@ export const addToBlacklist = async (token: string) => {
     }
   };
 
-export const authorize = (role: string) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        const userRole = (req as any).user.role;
-        if (userRole !== role) {
-            res.status(403).json({ success: false, message: 'Access denied. Insufficient permissions.' });
-            return;
+  export const authorize = (role: string) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user.id; // Asume que el ID del usuario está en el token decodificado
+
+        try {
+            // Consulta la base de datos para obtener el rol del usuario
+            const query = `
+                SELECT r.name 
+                FROM roles r
+                JOIN user_roles ur ON r.id = ur.role_id
+                WHERE ur.user_id = $1
+            `;
+            const result = await pool.query(query, [userId]);
+
+            if (result.rows.length === 0) {
+                res.status(403).json({ success: false, message: 'Access denied. User has no roles assigned.' });
+                return;
+            }
+
+            const userRole = result.rows[0].name;
+
+            if (userRole !== role) {
+                res.status(403).json({ success: false, message: 'Access denied. Insufficient permissions.' });
+                return;
+            }
+
+            next();
+        } catch (error) {
+            console.error("Error checking user role:", error);
+            res.status(500).json({ success: false, message: 'Internal server error' });
         }
-        next();
     };
 };
