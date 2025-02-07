@@ -37,34 +37,34 @@ export const addToBlacklist = async (token: string) => {
 
   export const authorize = (role: string) => {
     return async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user.id; // Asume que el ID del usuario está en el token decodificado
-
         try {
-            // Consulta la base de datos para obtener el rol del usuario
-            const query = `
-                SELECT r.name 
-                FROM roles r
-                JOIN user_roles ur ON r.id = ur.role_id
-                WHERE ur.user_id = $1
-            `;
-            const result = await pool.query(query, [userId]);
+            // Obtener el ID del usuario del token decodificado
+            const userId = (req as any).user.id;
 
-            if (result.rows.length === 0) {
-                res.status(403).json({ success: false, message: 'Access denied. User has no roles assigned.' });
-                return;
-            }
+            // Consultar la base de datos para verificar el rol
+            const roleQuery = await pool.query(
+                `SELECT r.name 
+                 FROM user_roles ur
+                 JOIN roles r ON ur.role_id = r.id
+                 WHERE ur.user_id = $1`, 
+                [userId]
+            );
 
-            const userRole = result.rows[0].name;
-
-            if (userRole !== role) {
-                res.status(403).json({ success: false, message: 'Access denied. Insufficient permissions.' });
-                return;
+            // Verificar si el rol coincide
+            if (roleQuery.rows.length === 0 || roleQuery.rows[0].name !== role) {
+                return res.status(403).json({ 
+                    success: false, 
+                    message: 'Access denied. Insufficient permissions.' 
+                });
             }
 
             next();
         } catch (error) {
-            console.error("Error checking user role:", error);
-            res.status(500).json({ success: false, message: 'Internal server error' });
+            console.error("Authorization error:", error);
+            res.status(500).json({ 
+                success: false, 
+                message: 'Internal server error during authorization' 
+            });
         }
     };
 };
