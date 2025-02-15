@@ -35,6 +35,23 @@ export const changeUserRole = async (req: Request, res: Response): Promise<void>
 
         res.json({ success: true, message: "User role changed successfully" });
     } catch (error: any) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error("Error in changeUserRole:", error);
+
+        // Manejo específico para errores de base de datos
+        if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
+            res.status(502).json({ 
+                success: false, 
+                message: "Database connection error", 
+                details: error.message 
+            });
+        } else {
+            // Otros errores
+            res.status(500).json({ 
+                success: false, 
+                message: "Internal server error", 
+                details: error.message,
+                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+            });
+        }
     }
 };
