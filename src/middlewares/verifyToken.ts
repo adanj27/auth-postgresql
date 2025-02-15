@@ -35,36 +35,39 @@ export const addToBlacklist = async (token: string) => {
     }
   };
 
-  export const authorize = (role: string) => {
+  export const authorize = (requiredRole: string) => {
     return async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            // Obtener el ID del usuario del token decodificado
-            const userId = (req as any).user.id;
-
-            // Consultar la base de datos para verificar el rol
-            const roleQuery = await pool.query(
-                `SELECT r.name 
-                 FROM user_roles ur
-                 JOIN roles r ON ur.role_id = r.id
-                 WHERE ur.user_id = $1`, 
-                [userId]
-            );
-
-            // Verificar si el rol coincide
-            if (roleQuery.rows.length === 0 || roleQuery.rows[0].name !== role) {
-                return res.status(403).json({ 
-                    success: false, 
-                    message: 'Access denied. Insufficient permissions.' 
-                });
-            }
-
-            next();
-        } catch (error) {
-            console.error("Authorization error:", error);
-            res.status(500).json({ 
-                success: false, 
-                message: 'Internal server error during authorization' 
-            });
+      const userId = (req as any).user.id;
+  
+      if (!userId) {
+        return res.status(403).json({ success: false, message: 'User ID not found in token.' });
+      }
+  
+      try {
+        // Obtener el nombre del rol del usuario en una sola consulta
+        const query = `
+          SELECT r.name 
+          FROM profiles p
+          JOIN roles r ON p.role_id = r.id
+          WHERE p.user_id = $1
+        `;
+        const result = await pool.query(query, [userId]);
+  
+        if (result.rows.length === 0) {
+          return res.status(403).json({ success: false, message: 'User has no assigned role.' });
         }
+  
+        const userRole = result.rows[0].name;
+  
+        if (userRole !== requiredRole) {
+          return res.status(403).json({ success: false, message: 'Access denied. Insufficient permissions.' });
+        }
+  
+        next();
+      } catch (error) {
+        console.error("Error checking user role:", error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+      }
     };
-};
+  };
+  
