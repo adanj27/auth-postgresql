@@ -7,12 +7,11 @@ const adminRoutes = express.Router();
 
 // Proteger todas las rutas con autenticación y autorización
 adminRoutes.use(verifyToken);
-adminRoutes.use(authorize('admin'));
 
 // Obtener lista de usuarios
-adminRoutes.get('/users', getUsers);
+adminRoutes.get('/users', authorize('admin'), getUsers);
 
 // Eliminar un usuario
-adminRoutes.delete('/users/:userId', deleteUser);
+adminRoutes.delete('/users/:userId', authorize('admin'), deleteUser);
 
 export default adminRoutes;

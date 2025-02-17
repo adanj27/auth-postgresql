@@ -7,12 +7,11 @@ const superadminRoutes = express.Router();
 
 // Proteger todas las rutas con autenticación y autorización
 superadminRoutes.use(verifyToken);
-superadminRoutes.use(authorize('superadmin'));
 
 // Obtener lista de usuarios (con filtro opcional por nombre)
-superadminRoutes.get('/users', getUsers);
+superadminRoutes.get('/users', authorize('superadmin'), getUsers);
 
 // Cambiar el rol de un usuario
-superadminRoutes.post('/change-role', changeUserRole);
+superadminRoutes.post('/change-role', authorize('superadmin'), changeUserRole);
 
 export default superadminRoutes;
