@@ -12,7 +12,7 @@ import swaggerDocs from './docs/swagger';
 const app = express();
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: '*',
   optionsSuccessStatus: 200
 };
 
