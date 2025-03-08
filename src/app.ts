@@ -12,11 +12,11 @@ import swaggerDocs from './docs/swagger';
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://192.168.0.105:8081'], // Especifica los dominios permitidos
+  origin: '*', // Permitir todos los orígenes
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
