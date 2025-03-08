@@ -12,7 +12,7 @@ import swaggerDocs from './docs/swagger';
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://tudominio.com'], // Especifica los dominios permitidos
+  origin: '*', // Especifica los dominios permitidos
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
