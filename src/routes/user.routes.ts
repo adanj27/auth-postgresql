@@ -1,13 +1,15 @@
 import { Router } from 'express';
-import { verifyToken } from '../middlewares/verifyToken';
+import { authorize, verifyToken } from '../middlewares/verifyToken';
 import { getProfile, updateUserProfile } from '../controllers/profile.controller';
 
 const router = Router();
 
+router.use(verifyToken);
+
 // Obtener el perfil del usuario
-router.get("/profile", verifyToken, getProfile);
+router.get("/profile", authorize('user'), getProfile);
 
 // Actualizar el perfil del usuario
-router.put("/profile", verifyToken, updateUserProfile);
+router.put("/profile", authorize('user'), updateUserProfile);
 
 export default router;
