@@ -7,7 +7,7 @@ const router = Router();
 router.use(verifyToken);
 
 // Obtener el perfil del usuario
-router.get("/profile", authorize('user'), getProfile);
+router.get("/profile", getProfile);
 
 // Actualizar el perfil del usuario
 router.put("/profile", authorize('user'), updateUserProfile);
