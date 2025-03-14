@@ -4,7 +4,7 @@ import { getProfile, updateUserProfile } from '../controllers/profile.controller
 
 const router = Router();
 
-router.use(verifyToken);
+// router.use(verifyToken);
 
 // Obtener el perfil del usuario
 router.get("/profile", getProfile);
