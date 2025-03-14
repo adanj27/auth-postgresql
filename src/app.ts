@@ -11,15 +11,13 @@ import swaggerDocs from './docs/swagger';
 
 const app = express();
 
-// const corsOptions = {
-//   origin: 'https://frontprueba-seven.vercel.app', // Origen específico
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-//   credentials: true,
-//   optionsSuccessStatus: 200,
-// };
+// Configuración de CORS
+const corsOptions = {
+  origin: 'https://frontprueba-seven.vercel.app', // Permite solo este origen
+  credentials: true, // Permite el uso de credenciales (cookies, encabezados de autorización, etc.)
+};
 
-app.use(cors());
+app.use(cors(corsOptions)); // Usa la configuración de CORS
 app.use(express.json());
 app.use(sanitizeInput);
 app.use("/api/v1/auth", authRoutes);
