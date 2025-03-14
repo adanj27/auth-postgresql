@@ -12,7 +12,7 @@ import swaggerDocs from './docs/swagger';
 const app = express();
 
 const corsOptions = {
-  origin: 'https://frontprueba-seven.vercel.app/', // Origen específico
+  origin: 'https://frontprueba-seven.vercel.app', // Origen específico
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
