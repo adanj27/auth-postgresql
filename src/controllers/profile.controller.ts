@@ -2,13 +2,18 @@ import { Request, Response } from 'express';
 import { findProfileByUserId, updateProfile } from '../models/profile.model';
 
 // Obtener el perfil del usuario
-export const getProfile = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getProfile = async (req: Request, res: Response): Promise<void> => {
   try {
+    if (!req.body || !req.body.user || !req.body.user.id) {
+      res.status(400).json({ success: false, message: 'Invalid user data' });
+      return;
+    }
+
     const user = req.body.user;
+    console.log('User received:', user);
+
     const profile = await findProfileByUserId(user.id);
+    console.log('Profile fetched:', profile);
 
     if (!profile) {
       res.status(404).json({ success: false, message: 'Profile not found' });
@@ -30,6 +35,7 @@ export const getProfile = async (
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
 
 // Actualizar el perfil del usuario
 export const updateUserProfile = async (
