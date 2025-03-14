@@ -3,10 +3,12 @@ import { pool } from '../config/database';
 
 export const findProfileByUserId = async (userId: string) => {
   try {
+    console.log('Fetching profile for user ID:', userId); // Verifica el userId
     const result = await pool.query(
       'SELECT * FROM profiles WHERE user_id = $1',
       [userId]
     );
+    console.log('Query result:', result.rows); // Verifica el resultado de la consulta
     return result.rows[0] || null;
   } catch (error) {
     console.error('Error fetching profile by user ID:', error);

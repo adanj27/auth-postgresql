@@ -4,14 +4,16 @@ import { findProfileByUserId, updateProfile } from '../models/profile.model';
 // Obtener el perfil del usuario
 export const getProfile = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.query.userId; // Obtén el ID del usuario desde los parámetros de consulta
+    const userId = req.query.userId;
+    console.log('User ID from request:', userId); // Verifica el userId
+
     if (!userId) {
       res.status(400).json({ success: false, message: 'Invalid user data' });
       return;
     }
 
     const profile = await findProfileByUserId(userId as string);
-    console.log('Profile fetched:', profile);
+    console.log('Profile fetched:', profile); // Verifica el perfil obtenido
 
     if (!profile) {
       res.status(404).json({ success: false, message: 'Profile not found' });
@@ -22,15 +24,19 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
       success: true,
       message: 'User profile',
       user: {
-        email: profile.email,
-        name: profile.name,
-        username: profile.username,
-        bio: profile.bio,
+        email: profile.email || 'No email', // Valor predeterminado si está vacío
+        name: profile.name || 'No name',   // Valor predeterminado si está vacío
+        username: profile.username || 'No username', // Valor predeterminado si está vacío
+        bio: profile.bio || 'No bio',       // Valor predeterminado si está vacío
       },
     });
   } catch (error) {
     console.error('Error fetching profile:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error',
+      error: (error as Error).message // Agrega el mensaje de error para más detalles
+    });
   }
 };
 
