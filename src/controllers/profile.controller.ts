@@ -4,15 +4,20 @@ import { findProfileByUserId, updateProfile } from '../models/profile.model';
 // Obtener el perfil del usuario
 export const getProfile = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (!req.body || !req.body.user || !req.body.user.id) {
+    // Verifica el token y obtén el ID del usuario
+    const token = req.headers.authorization?.split(' ')[1]; // Asume que el token viene en el header "Authorization: Bearer <token>"
+    if (!token) {
+      res.status(401).json({ success: false, message: 'Unauthorized' });
+      return;
+    }
+
+    if (!token) {
       res.status(400).json({ success: false, message: 'Invalid user data' });
       return;
     }
 
-    const user = req.body.user;
-    console.log('User received:', user);
-
-    const profile = await findProfileByUserId(user.id);
+    // Busca el perfil del usuario
+    const profile = await findProfileByUserId(token);
     console.log('Profile fetched:', profile);
 
     if (!profile) {
@@ -20,12 +25,13 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
+    // Devuelve el perfil del usuario
     res.json({
       success: true,
       message: 'User profile',
       user: {
-        email: user.email,
-        name: user.name,
+        email: profile.email,
+        name: profile.name,
         username: profile.username,
         bio: profile.bio,
       },
