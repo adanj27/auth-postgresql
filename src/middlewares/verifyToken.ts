@@ -23,11 +23,15 @@ export const verifyToken = async (
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
+    res.header('Access-Control-Allow-Origin', 'https://frontprueba-seven.vercel.app');
+    res.header('Access-Control-Allow-Credentials', 'true');
     res.status(401).json({ message: 'Token missing' });
     return;
   }
 
   if (await isTokenBlacklisted(token)) {
+    res.header('Access-Control-Allow-Origin', 'https://frontprueba-seven.vercel.app');
+    res.header('Access-Control-Allow-Credentials', 'true');
     res.status(403).json({ message: 'Token is blacklisted' });
     return;
   }
@@ -38,6 +42,8 @@ export const verifyToken = async (
     next();
   } catch (error) {
     console.error('Token verification error:', error);
+    res.header('Access-Control-Allow-Origin', 'https://frontprueba-seven.vercel.app');
+    res.header('Access-Control-Allow-Credentials', 'true');
     res.status(403).json({ message: 'Invalid token' });
   }
 };
@@ -47,6 +53,8 @@ export const authorize = (requiredRole: string) => {
     const userId = (req as any).user.id;
 
     if (!userId) {
+      res.header('Access-Control-Allow-Origin', 'https://frontprueba-seven.vercel.app');
+      res.header('Access-Control-Allow-Credentials', 'true');
       return res
         .status(403)
         .json({ success: false, message: 'User ID not found in token.' });
@@ -63,6 +71,8 @@ export const authorize = (requiredRole: string) => {
       const result = await pool.query(query, [userId]);
 
       if (result.rows.length === 0) {
+        res.header('Access-Control-Allow-Origin', 'https://frontprueba-seven.vercel.app');
+        res.header('Access-Control-Allow-Credentials', 'true');
         return res
           .status(403)
           .json({ success: false, message: 'User has no assigned role.' });
@@ -71,6 +81,8 @@ export const authorize = (requiredRole: string) => {
       const userRole = result.rows[0].name;
 
       if (userRole !== requiredRole) {
+        res.header('Access-Control-Allow-Origin', 'https://frontprueba-seven.vercel.app');
+        res.header('Access-Control-Allow-Credentials', 'true');
         return res
           .status(403)
           .json({
@@ -82,6 +94,8 @@ export const authorize = (requiredRole: string) => {
       next();
     } catch (error) {
       console.error('Error checking user role:', error);
+      res.header('Access-Control-Allow-Origin', 'https://frontprueba-seven.vercel.app');
+      res.header('Access-Control-Allow-Credentials', 'true');
       res
         .status(500)
         .json({ success: false, message: 'Internal server error' });
