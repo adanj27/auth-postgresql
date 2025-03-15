@@ -13,21 +13,34 @@ const app = express();
 
 // Configuración de CORS
 const corsOptions = {
-  origin: 'https://frontprueba-seven.vercel.app', // Permite solo este origen
-  credentials: true, // Permite el uso de credenciales (cookies, encabezados de autorización, etc.)
+  origin: 'https://frontprueba-seven.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  maxAge: 86400 // Cache preflight requests for 24 hours
 };
 
-app.use(cors(corsOptions)); // Usa la configuración de CORS
+// Aplicar CORS antes de todas las rutas
+app.use(cors(corsOptions));
+
+// Middleware para manejar preflight requests
+app.options('*', cors(corsOptions));
+
 app.use(express.json());
 app.use(sanitizeInput);
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/user", userRoutes);
-// Rutas protegidas para admin
-app.use('/api/v1/admin', adminRoutes);
 
-// Rutas protegidas para superadmin
+// Rutas públicas
+app.use("/api/v1/auth", authRoutes);
+
+// Rutas protegidas
+app.use("/api/v1/user", userRoutes);
+app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/superadmin', superadminRoutes);
+
+// Documentación
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Manejo de errores
 app.use(errorHandler);
 
 export default app;
