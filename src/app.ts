@@ -13,7 +13,7 @@ const app = express();
 
 // Configuración de CORS
 const corsOptions = {
-  origin: 'https://frontprueba-seven.vercel.app',
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
