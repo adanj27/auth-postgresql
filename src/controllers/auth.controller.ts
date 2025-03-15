@@ -9,7 +9,6 @@ import { addToBlacklist } from "../middlewares/verifyToken";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
-        // Validar datos usando Zod
         const { email, password, username } = RegisterSchema.parse(req.body);
 
         const userExists = await findUserByEmail(email);
@@ -30,24 +29,29 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         await createProfile(user.id, "");
         await assignRoleToUser(user.id, 'user');
 
+        // Generate token after registration
+        const role = await getUserRole(user.id);
+        const token = generateToken({ id: user.id, email: user.email, role });
+
         res.status(201).json({
             success: true,
             message: "User registered successfully",
-            data: {
+            token,
+            user: {
                 id: user.id,
                 email: user.email,
-                name: user.name,
+                username: user.username,
                 registeredAt: user.registered_at,
             },
         });
     } catch (error: any) {
+        console.error('Registration error:', error);
         res.status(400).json({ success: false, message: error.message });
     }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
-        // Validar datos usando Zod
         const { email, password } = LoginSchema.parse(req.body);
 
         const user = await findUserByEmail(email);
@@ -62,7 +66,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Obtener el rol del usuario
         const role = await getUserRole(user.id);
         if (!role) {
             res.status(500).json({ success: false, message: "Role not found for user" });
@@ -70,12 +73,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         }
 
         const token = generateToken({ id: user.id, email: user.email, role });
+        
         res.json({
             success: true,
             message: "Login successful",
             token,
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username
+            }
         });
     } catch (error: any) {
+        console.error('Login error:', error);
         res.status(400).json({ success: false, message: error.message });
     }
 };
@@ -90,10 +100,10 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        addToBlacklist(token);
-
+        await addToBlacklist(token);
         res.status(200).json({ success: true, message: "Logged out successfully" });
     } catch (error: any) {
+        console.error('Logout error:', error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
