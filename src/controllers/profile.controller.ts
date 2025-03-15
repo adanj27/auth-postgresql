@@ -4,16 +4,16 @@ import { findProfileByUserId, updateProfile } from '../models/profile.model';
 // Obtener el perfil del usuario
 export const getProfile = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.query.userId;
-    console.log('User ID from request:', userId); // Verifica el userId
+    // Get userId from authenticated user token
+    const userId = (req as any).user?.id;
 
     if (!userId) {
-      res.status(400).json({ success: false, message: 'Invalid user data' });
+      res.status(401).json({ success: false, message: 'User not authenticated' });
       return;
     }
 
-    const profile = await findProfileByUserId(userId as string);
-    console.log('Profile fetched:', profile); // Verifica el perfil obtenido
+    const profile = await findProfileByUserId(userId);
+    console.log('Profile fetched:', profile);
 
     if (!profile) {
       res.status(404).json({ success: false, message: 'Profile not found' });
@@ -22,12 +22,12 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
 
     res.json({
       success: true,
-      message: 'User profile',
+      message: 'User profile retrieved successfully',
       user: {
-        email: profile.email || 'No email', // Valor predeterminado si está vacío
-        name: profile.name || 'No name',   // Valor predeterminado si está vacío
-        username: profile.username || 'No username', // Valor predeterminado si está vacío
-        bio: profile.bio || 'No bio',       // Valor predeterminado si está vacío
+        email: profile.email || 'No email',
+        name: profile.name || 'No name',
+        username: profile.username || 'No username',
+        bio: profile.bio || 'No bio',
       },
     });
   } catch (error) {
@@ -35,11 +35,10 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
     res.status(500).json({ 
       success: false, 
       message: 'Internal server error',
-      error: (error as Error).message // Agrega el mensaje de error para más detalles
+      error: (error as Error).message
     });
   }
 };
-
 
 // Actualizar el perfil del usuario
 export const updateUserProfile = async (
@@ -47,10 +46,16 @@ export const updateUserProfile = async (
   res: Response
 ): Promise<void> => {
   try {
-    const user = req.body.user;
+    // Get userId from authenticated user token
+    const userId = (req as any).user?.id;
     const { name } = req.body;
 
-    const updatedProfile = await updateProfile(user.id, name);
+    if (!userId) {
+      res.status(401).json({ success: false, message: 'User not authenticated' });
+      return;
+    }
+
+    const updatedProfile = await updateProfile(userId, name);
 
     if (!updatedProfile) {
       res.status(404).json({ success: false, message: 'Profile not found' });
@@ -61,12 +66,16 @@ export const updateUserProfile = async (
       success: true,
       message: 'Profile updated successfully',
       user: {
-        email: user.email,
-        name: user.name,
-        username: updatedProfile.name,
+        name: updatedProfile.name,
+        bio: updatedProfile.bio || 'No bio',
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error('Error updating profile:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error',
+      error: (error as Error).message
+    });
   }
 };

@@ -4,10 +4,11 @@ import { getProfile, updateUserProfile } from '../controllers/profile.controller
 
 const router = Router();
 
-// router.use(verifyToken);
+// Protect all user routes with authentication
+router.use(verifyToken);
 
 // Obtener el perfil del usuario
-router.get("/profile", getProfile);
+router.get("/profile", authorize('user'), getProfile);
 
 // Actualizar el perfil del usuario
 router.put("/profile", authorize('user'), updateUserProfile);
