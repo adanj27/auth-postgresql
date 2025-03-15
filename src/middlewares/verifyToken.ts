@@ -3,12 +3,12 @@ import jwt from 'jsonwebtoken';
 import { pool } from '../config/database';
 
 export const addToBlacklist = async (token: string) => {
-  await pool.query('INSERT INTO token_blacklist (token) VALUES ($1)', [token]);
+  await pool.query('INSERT INTO blacklist (token) VALUES ($1)', [token]);
 };
 
 export const isTokenBlacklisted = async (token: string): Promise<boolean> => {
   const result = await pool.query(
-    'SELECT 1 FROM token_blacklist WHERE token = $1',
+    'SELECT 1 FROM blacklist WHERE token = $1',
     [token]
   );
   return (result.rowCount ?? 0) > 0;
