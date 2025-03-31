@@ -34,6 +34,13 @@
  *           maximum: 100
  *           default: 10
  *         description: Número de usuarios por página
+ *       - in: query
+ *         name: action
+ *         schema:
+ *           type: string
+ *           enum: [search, cancel]
+ *           required: true
+ *         description: Acción a realizar (search para ejecutar la búsqueda, cancel para cancelarla)
  *     responses:
  *       200:
  *         description: Lista de usuarios obtenida exitosamente
@@ -91,6 +98,19 @@
  *                       type: integer
  *                       example: 10
  *                       description: Usuarios por página
+ *       400:
+ *         description: Error en la solicitud - Acción no válida
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Acción no válida. Debe ser 'search' o 'cancel'
  *       401:
  *         description: No autorizado - Token inválido o expirado
  *       403:
