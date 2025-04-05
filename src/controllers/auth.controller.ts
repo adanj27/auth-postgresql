@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { createUser, findUserByEmail, findUserByUsername } from "../models/user.model";
+import { createUser, findUserByEmail, findUserByUsername, updateUserStatusAndLoginInfo, resetLoginAttempts, incrementLoginAttempts } from "../models/user.model";
 import { assignRoleToUser, getUserRole } from "../models/role.model";
 import { generateToken } from "../utils/jwt";
 import { RegisterSchema, LoginSchema } from "../schemas/auth.schema";
@@ -62,10 +62,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            await incrementLoginAttempts(user.id);
             res.status(400).json({ success: false, message: "Invalid credentials" });
             return;
         }
 
+        await resetLoginAttempts(user.id);
         const role = await getUserRole(user.id);
         if (!role) {
             res.status(500).json({ success: false, message: "Role not found for user" });
@@ -74,6 +76,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
         const token = generateToken({ id: user.id, email: user.email, role });
         
+        await updateUserStatusAndLoginInfo(user.id, 'active', new Date(), 0);
+
         res.json({
             success: true,
             message: "Login successful",
